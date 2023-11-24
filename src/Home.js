@@ -6,14 +6,13 @@ const Home = () => {
     const [error, setError] = useState(null)
     useEffect(()=>{
         fetch('http://localhost:8000/api/v1/').then((res) => {
-            if (res.ok){ 
-                return res.json()
-            }
-            else {
+            if (!res.ok){ 
                 throw Error(`Error ${res.status}: data could not be fetched`)
             }
+            return res.json()
         }).then((data) => {
             setMovies(data)
+            setError(null)
         }).catch((err) => {
             console.log(err.message)
             setError(err.message)
@@ -22,7 +21,7 @@ const Home = () => {
 
     return (
         <div className="home">
-            {!movies && <p>Loading...</p>}
+            {!movies && !error && <p>Loading...</p>}
             {error && <p>{error}</p>}
             {movies && <MovieList movies={movies} />}
         </div>

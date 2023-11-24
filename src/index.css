@@ -56,3 +56,69 @@
   color: rgb(25, 184, 184);
   margin-bottom: 8px;
 }
+
+.movie-list a {
+  text-decoration: none;
+}
+
+.add-movie, .edit-movie {
+  max-width: 400px;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.add-movie label, .edit-movie label {
+  text-align: left;
+  display: block;
+}
+
+.add-movie h2, .edit-movie h2 {
+  font-size: 20px;
+  color: rgb(25, 184, 184);
+  margin-bottom: 30px;
+}
+
+.add-movie input, .add-movie textarea, .add-movie select, 
+.edit-movie input, .edit-movie textarea, .edit-movie select {
+  width: 100%;
+  padding: 6px 10px;
+  margin: 10px 0px;
+  border: 1px solid #ddd;
+  box-sizing: border-box;
+  display: block;
+}
+
+.add-movie button, .edit-movie button {
+  background: rgb(25, 184, 184);
+  color: #fff;
+  border: 0;
+  padding: 8px;
+  border: 8px;
+  margin-top: 8px;
+  cursor: pointer;
+}
+
+.movie-detail button {
+  background: rgb(25, 184, 184);
+  color: #fff;
+  border-radius: 4px;
+  border: 0;
+  padding: 8px 16px;
+  margin: 8px 8px 0px 0px;
+  cursor: pointer;
+}
+
+.delete-movie {
+  align-items: center;
+}
+
+.delete-movie button {
+  background: rgb(184, 25, 25);
+  color: #fff;
+  border: 0;
+  border-radius: 4px;
+  padding: 8px;
+  margin-top: 16px;
+  cursor: pointer;
+}
+
