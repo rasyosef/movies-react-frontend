@@ -4,6 +4,9 @@ import MovieDetail from './MovieDetail';
 import AddMovie from './AddMovie';
 import EditMovie from './EditMovie';
 import DeleteMovie from './DeleteMovie';
+import Login from './Login';
+import Signup from './Signup';
+import NotFound from './NotFound';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
 function App() {
@@ -16,6 +19,12 @@ function App() {
             <Route path='/' exact>
               <Home />
             </Route>
+            <Route path='/signup' exact>
+              <Signup />
+            </Route>
+            <Route path='/login' exact>
+              <Login />
+            </Route>
             <Route path='/add' exact>
               <AddMovie />
             </Route>
@@ -27,6 +36,9 @@ function App() {
             </Route>
             <Route path='/movies/:id/delete' exact>
               <DeleteMovie />
+            </Route>
+            <Route path='*'>
+              <NotFound />
             </Route>
           </Switch>
         </div>

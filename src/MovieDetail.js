@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
+import Cookies from "universal-cookie";
 
 const MovieDetail = () => {
     const { id } = useParams()
@@ -7,8 +8,18 @@ const MovieDetail = () => {
     const [movie, setMovie] = useState(null)
     const [error, setError] = useState(null)
 
+    const cookies = new Cookies();
+    const [token,] = useState(cookies.get('token'))
+    const [userid, setUserId] = useState(100000)
+
     useEffect(()=>{
-        fetch(`http://localhost:8000/api/v1/${id}`).then((res) => {
+        fetch(`http://localhost:8000/api/v1/${id}/`, {
+            method : 'GET',
+            headers : {
+                'Content-Type' : 'application/json', 
+                Authorization : `Token ${token}`
+            }
+        }).then((res) => {
             if (!res.ok){ 
                 throw Error(`Error ${res.status}: data could not be fetched`)
             }
@@ -20,7 +31,24 @@ const MovieDetail = () => {
             console.log(err.message)
             setError(err.message)
         })
-    }, [id])
+        
+        fetch('http://localhost:8000/api/v1/dj-rest-auth/user/', {
+            method : 'GET',
+            headers : {
+                'Content-Type' : 'application/json', 
+                Authorization : `Token ${token}`
+            }
+        }).then((res) => {
+            if (!res.ok){ 
+                throw Error(`Error ${res.status}: data could not be fetched`)
+            }
+            return res.json()
+        }).then((data)=>{
+            setUserId(data.pk)
+        }).catch((e)=>(
+            console.log(e.message)
+        ))
+    }, [id, token])
 
     return (
         <div>
@@ -34,8 +62,8 @@ const MovieDetail = () => {
                 <p><b>Writers:</b> {movie.writers}</p>
                 <p><b>Genre:</b> {movie.categories}</p>
                 <p><b>Description:</b> {movie.description}</p>
-                <Link to={`/movies/${id}/edit`}><button>Edit</button></Link>
-                <Link to={`/movies/${id}/delete`}><button>Delete</button></Link>
+                {movie.created_by === userid && <Link to={`/movies/${id}/edit`}><button>Edit</button></Link>}
+                {movie.created_by === userid && <Link to={`/movies/${id}/delete`}><button>Delete</button></Link>}
             </div>}
         </div>
     )

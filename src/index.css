@@ -35,6 +35,17 @@
   color: rgb(25, 184, 184);
 }
 
+.navbar button {
+  background: rgb(25, 184, 184);
+  color: #fff;
+  border: 0;
+  padding: 8px;
+  border: 8px;
+  margin-top: 8px;
+  margin-left: 16px;
+  cursor: pointer;
+}
+
 .content {
   max-width: 600px;
   margin: 40px auto;
@@ -61,25 +72,26 @@
   text-decoration: none;
 }
 
-.add-movie, .edit-movie {
+.add-movie, .edit-movie, .login, .signup {
   max-width: 400px;
   text-align: center;
   margin: 0 auto;
 }
 
-.add-movie label, .edit-movie label {
+.add-movie label, .edit-movie label, .login label, .signup label {
   text-align: left;
   display: block;
 }
 
-.add-movie h2, .edit-movie h2 {
+.add-movie h2, .edit-movie h2, .login h2, .signup h2 {
   font-size: 20px;
   color: rgb(25, 184, 184);
   margin-bottom: 30px;
 }
 
 .add-movie input, .add-movie textarea, .add-movie select, 
-.edit-movie input, .edit-movie textarea, .edit-movie select {
+.edit-movie input, .edit-movie textarea, .edit-movie select,
+.login input, .signup input {
   width: 100%;
   padding: 6px 10px;
   margin: 10px 0px;
@@ -88,13 +100,15 @@
   display: block;
 }
 
-.add-movie button, .edit-movie button {
+.add-movie button, .edit-movie button, .signup button,
+.login button {
   background: rgb(25, 184, 184);
   color: #fff;
   border: 0;
   padding: 8px;
   border: 8px;
   margin-top: 8px;
+  margin-left: 16px;
   cursor: pointer;
 }
 

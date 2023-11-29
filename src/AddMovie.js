@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { useHistory } from 'react-router-dom'
+import { useState, useEffect } from "react";
+import { useHistory } from 'react-router-dom';
+import Cookies from "universal-cookie";
 
 const AddMovie = () => {
     
@@ -10,17 +11,48 @@ const AddMovie = () => {
     const [categories, setCategories] = useState('')
     const [description, setDescription] = useState('')
     const [image, setImage] = useState('')
-    const [created_by, setCreatedBy] = useState(1)
+    const [created_by, setCreatedBy] = useState(100000)
 
     const [error, setError] = useState(null)
     const history = useHistory()
 
+    const cookies = new Cookies();
+    const [token,] = useState(cookies.get('token'))
+
+    const [username, setUsername] = useState('')
+    const [userid, setUserId] = useState(null)
+
+    useEffect(()=>{
+        if (token){
+            fetch('http://localhost:8000/api/v1/dj-rest-auth/user', {
+                method : 'GET',
+                headers : {
+                    'Content-Type' : 'application/json', 
+                    Authorization : `Token ${token}`
+                }
+            }).then((res) => {
+                if (!res.ok){ 
+                    throw Error(`Error ${res.status}: data could not be fetched`)
+                }
+                return res.json()
+            }).then((data)=>{
+                setUserId(data.pk)
+                setUsername(data.username)
+                setCreatedBy(data.pk)
+            }).catch((e)=>(
+                console.log(e.message)
+            ))
+        }
+    }, [token])
+
     const handleSubmit = (e) => {
         e.preventDefault()
-
         fetch('http://localhost:8000/api/v1/', {
             method : 'POST',
-            headers : {'Content-Type' : 'application/json'},
+            headers : {
+                'Content-Type' : 'application/json',
+                Authorization : `Token ${token}`
+            },
             body : JSON.stringify({
                 title,
                 year_of_release: year,
@@ -71,7 +103,7 @@ const AddMovie = () => {
 
                 <label>Created By :</label>
                 <select value={created_by} onChange={(e)=>setCreatedBy(e.target.value)}>
-                    <option value={1}>ras</option>
+                    <option value={userid}>{username}</option>
                 </select>
                 
                 {error && <p>{ error }</p>}

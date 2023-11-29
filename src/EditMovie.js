@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { useParams, useHistory } from 'react-router-dom'
+import Cookies from "universal-cookie"
 
 const EditMovie = () => {
     const { id } = useParams()
@@ -12,12 +13,24 @@ const EditMovie = () => {
     const [categories, setCategories] = useState('')
     const [description, setDescription] = useState('')
     const [image, setImage] = useState('')
-    const [created_by, setCreatedBy] = useState(1)
+    const [created_by, setCreatedBy] = useState('')
 
     const [error, setError] = useState(null)
 
+    const cookies = new Cookies()
+    const [token,] = useState(cookies.get('token'))
+
+    const [username, setUsername] = useState('')
+    const [userid, setUserId] = useState(100000)
+
     useEffect(()=>{
-        fetch(`http://localhost:8000/api/v1/${id}`).then((res) => {
+        fetch(`http://localhost:8000/api/v1/${id}`, {
+            method : 'GET',
+            headers : {
+                'Content-Type' : 'application/json', 
+                Authorization : `Token ${token}`
+            }
+        }).then((res) => {
             if (!res.ok){ 
                 throw Error(`Error ${res.status}: data could not be fetched`)
             }
@@ -30,20 +43,42 @@ const EditMovie = () => {
             setCategories(data.categories)
             setDescription(data.description)
             setImage(data.image)
-            setCreatedBy(data.created_by)
+            //setCreatedBy(data.created_by)
             setError(null)
         }).catch((err) => {
             console.log(err.message)
             setError(err.message)
-        })
-    }, [id])
+        }) 
+
+        fetch('http://localhost:8000/api/v1/dj-rest-auth/user', {
+            method : 'GET',
+            headers : {
+                'Content-Type' : 'application/json', 
+                Authorization : `Token ${token}`
+            }
+        }).then((res) => {
+            if (!res.ok){ 
+                throw Error(`Error ${res.status}: data could not be fetched`)
+            }
+            return res.json()
+        }).then((data)=>{
+            setUserId(data.pk)
+            setUsername(data.username)
+            setCreatedBy(data.pk)
+        }).catch((e)=>(
+            console.log(e.message)
+        ))
+    }, [id, token])
 
     const handleUpdate = (e) => {
         e.preventDefault()
 
         fetch(`http://localhost:8000/api/v1/${id}/`, {
             method : 'PUT',
-            headers : {'Content-Type' : 'application/json'},
+            headers : {
+                'Content-Type' : 'application/json',
+                Authorization : `Token ${token}`
+            },
             body : JSON.stringify({
                 title,
                 year_of_release: year,
@@ -93,9 +128,11 @@ const EditMovie = () => {
                 <input value={image} onChange={(e)=>setImage(e.target.value)} type="text"></input>
 
                 <label>Created By :</label>
-                <select value={created_by} onChange={(e)=>setCreatedBy(e.target.value)}>
-                    <option value={1}>ras</option>
-                </select>
+                {userid && 
+                    <select value={created_by} onChange={(e)=>setCreatedBy(e.target.value)}>
+                        <option value={userid}>{username}</option>
+                    </select>
+                }
 
                 {error && <p>Error :{ error }</p>}
 
