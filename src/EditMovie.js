@@ -44,7 +44,7 @@ const EditMovie = () => {
             setError(null)
         }).catch((err) => {
             console.log(err.message)
-            setError(err.message)
+            setError([err.message])
         }) 
 
     }, [id, token])
@@ -68,15 +68,24 @@ const EditMovie = () => {
                 created_by,
             })
         }).then((res) => {
-            if (!res.ok){ 
-                throw Error(`Error ${res.status}: data could not be fetched`)
+            if (!res.ok && res.status!==400){ 
+                throw Error(`Error ${res.status}: data could not be saved`)
+            } 
+            return res.json()
+        }).then((data) => {
+            if ('id' in data){
+                setError(null)
+                navigate(`/movies/${id}`)
+            } else {
+                const messages = []
+                for (let field in data){
+                    messages.push(...data[field].map((m)=>`${field}: ${m}`))
+                }
+                setError(messages)
             }
-        }).then(() => {
-            setError(null)
-            navigate(`/movies/${id}`)
         }).catch((err) => {
             console.log(err.message)
-            setError(err.message)
+            setError([err.message])
         })
     }
 
@@ -112,7 +121,11 @@ const EditMovie = () => {
                     </select>
                 }
 
-                {error && <p>Error :{ error }</p>}
+                {error && 
+                    <ul>{ 
+                        error.map((m, ind)=><li key={ind}>{m}</li>)}
+                    </ul>
+                }
 
                 <button>Update</button>
             </form>

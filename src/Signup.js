@@ -29,39 +29,48 @@ const Signup = () => {
                 password2
             })
         }).then((res)=>{
-            if (res.ok) {
-                return res.json()
+            if (!res.ok && res.status !== 400){ 
+                throw Error(`Error ${res.status}: data could not be fetched`)
             }
-            throw Error(`Error ${res.status}: an error occured`)
+            return res.json()
         }).then((data)=>{
-            setError(null)
-            const token = data['key']
-            cookies.set('token', data['key'])
-            fetch('http://localhost:8000/api/v1/dj-rest-auth/user', {
-                method : 'GET',
-                headers : {
-                    'Content-Type' : 'application/json', 
-                    Authorization : `Token ${token}`
+            if (!('key' in data)){
+                const messages = []
+                for (let field in data){
+                    messages.push(...data[field].map((m)=>(field!=='non_field_errors') ? `${field}: ${m}` : m))
                 }
-            }).then((res) => {
-                if (!res.ok){ 
-                    throw Error(`Error ${res.status}: data could not be fetched`)
-                }
-                return res.json()
-            }).then((data)=>{
-                dispatch({type: 'LOGIN', payload: {
-                    token,
-                    username: data.username,
-                    userid: data.pk
-                }})
+                setError(messages)
+            }
+            else {
                 setError(null)
-                navigate('/')
-            }).catch((e)=>{
-                setError(e.message)
-                console.log(e.message)
-            })
+                const token = data['key']
+                cookies.set('token', data['key'])
+                fetch('http://localhost:8000/api/v1/dj-rest-auth/user', {
+                    method : 'GET',
+                    headers : {
+                        'Content-Type' : 'application/json', 
+                        Authorization : `Token ${token}`
+                    }
+                }).then((res) => {
+                    if (!res.ok){ 
+                        throw Error(`Error ${res.status}: data could not be fetched`)
+                    }
+                    return res.json()
+                }).then((data)=>{
+                    dispatch({type: 'LOGIN', payload: {
+                        token,
+                        username: data.username,
+                        userid: data.pk
+                    }})
+                    setError(null)
+                    navigate('/')
+                }).catch((e)=>{
+                    setError([e.message])
+                    console.log(e.message)
+                })
+            }
         }).catch((e)=>{
-            setError(e.message)
+            setError([e.message])
             console.log(e.message)
         })
     }
@@ -89,7 +98,11 @@ const Signup = () => {
                 <input type="password"
                     value={password2} 
                     onChange={(e)=>setPassword2(e.target.value)} />
-                {error && <p>{ error }</p>}
+                
+                {error && <ul>{ error.map((m, ind)=>(
+                    <li key={ind}>{m}</li>
+                )) }</ul>}
+                
                 <button>Signup</button>
             </form>
         </div>

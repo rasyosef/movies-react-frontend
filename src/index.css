@@ -78,19 +78,28 @@
   margin: 0 auto;
 }
 
-.add-movie label, .edit-movie label, .login label, .signup label {
+.signup li, .login li, .add-movie li, 
+.edit-movie li, .delete-movie p {
+  text-align: left;
+  color: rgb(184, 25, 25);
+}
+
+.add-movie label, .edit-movie label, 
+.login label, .signup label {
   text-align: left;
   display: block;
 }
 
-.add-movie h2, .edit-movie h2, .login h2, .signup h2 {
+.add-movie h2, .edit-movie h2,
+.login h2, .signup h2 {
   font-size: 20px;
   color: rgb(25, 184, 184);
   margin-bottom: 30px;
 }
 
-.add-movie input, .add-movie textarea, .add-movie select, 
-.edit-movie input, .edit-movie textarea, .edit-movie select,
+.add-movie input, .add-movie textarea, 
+.add-movie select, .edit-movie input, 
+.edit-movie textarea, .edit-movie select,
 .login input, .signup input {
   width: 100%;
   padding: 6px 10px;
@@ -100,8 +109,8 @@
   display: block;
 }
 
-.add-movie button, .edit-movie button, .signup button,
-.login button {
+.add-movie button, .edit-movie button, 
+.signup button, .login button {
   background: rgb(25, 184, 184);
   color: #fff;
   border: 0;
@@ -122,8 +131,8 @@
   cursor: pointer;
 }
 
-.delete-movie {
-  align-items: center;
+.delete-movie h2 {
+  margin-bottom: 16px;
 }
 
 .delete-movie button {

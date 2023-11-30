@@ -41,15 +41,24 @@ const AddMovie = () => {
                 created_by,
             })
         }).then((res) => {
-            if (!res.ok){ 
+            if (!res.ok && res.status!==400){ 
                 throw Error(`Error ${res.status}: data could not be fetched`)
+            } 
+            return res.json()
+        }).then((data) => {
+            if ('id' in data){
+                setError(null)
+                navigate('/')
+            } else {
+                const messages = []
+                for (let field in data){
+                    messages.push(...data[field].map((m)=>`${field}: ${m}`))
+                }
+                setError(messages)
             }
-        }).then(() => {
-            setError(null)
-            navigate('/')
         }).catch((err) => {
             console.log(err.message)
-            setError(err.message)
+            setError([err.message])
         })
     }
 
@@ -83,7 +92,11 @@ const AddMovie = () => {
                     <option value={userid}>{username}</option>
                 </select>
                 
-                {error && <p>{ error }</p>}
+                {error && <ul>{ 
+                    error.map((m, ind)=>(
+                        <li key={ind}>{m}</li>
+                    ))}
+                </ul>}
                 
                 <button>Add Movie</button>
             </form>

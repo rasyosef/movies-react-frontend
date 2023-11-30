@@ -28,7 +28,7 @@ const DeleteMovie = () => {
             setError(null)
         }).catch((err) => {
             console.log(err.message)
-            setError(err.message)
+            setError([err.message])
         })
     }, [id, token])
 
@@ -43,14 +43,14 @@ const DeleteMovie = () => {
             },
         }).then((res) => {
             if (!res.ok){ 
-                throw Error(`Error ${res.status}: data could not be fetched`)
+                throw Error(`Error ${res.status}: data could not be deleted`)
             }
         }).then(() => {
             setError(null)
             navigate('/')
         }).catch((err) => {
             console.log(err.message)
-            setError(err.message)
+            setError([err.message])
         })
     }
 
@@ -59,7 +59,7 @@ const DeleteMovie = () => {
             <form onSubmit={(e)=>handleDelete(e)}>
                 <h2>Are you sure you want to delete "{title}"</h2>
                 
-                {error && <p>Error :{ error }</p>}
+                {error && <p>{error}</p>}
 
                 <button>Delete</button>
             </form>
