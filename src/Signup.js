@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { useHistory} from "react-router-dom";
+import { useNavigate} from "react-router-dom";
 import Cookies from "universal-cookie";
+import { useAuthContext } from "./useAuthContext";
 
 const Signup = () => {
     
@@ -9,7 +10,11 @@ const Signup = () => {
     const [password1, setPassword1] = useState('')
     const [password2, setPassword2] = useState('')
 
-    const history = useHistory()
+    const [error, setError] = useState(null)
+
+    const { dispatch } = useAuthContext()
+
+    const navigate = useNavigate()
     const cookies = new Cookies()
 
     const handleLogin = (e) => {
@@ -29,11 +34,36 @@ const Signup = () => {
             }
             throw Error(`Error ${res.status}: an error occured`)
         }).then((data)=>{
+            setError(null)
+            const token = data['key']
             cookies.set('token', data['key'])
-            history.push('/')
-        }).catch((e)=>(
+            fetch('http://localhost:8000/api/v1/dj-rest-auth/user', {
+                method : 'GET',
+                headers : {
+                    'Content-Type' : 'application/json', 
+                    Authorization : `Token ${token}`
+                }
+            }).then((res) => {
+                if (!res.ok){ 
+                    throw Error(`Error ${res.status}: data could not be fetched`)
+                }
+                return res.json()
+            }).then((data)=>{
+                dispatch({type: 'LOGIN', payload: {
+                    token,
+                    username: data.username,
+                    userid: data.pk
+                }})
+                setError(null)
+                navigate('/')
+            }).catch((e)=>{
+                setError(e.message)
+                console.log(e.message)
+            })
+        }).catch((e)=>{
+            setError(e.message)
             console.log(e.message)
-        ))
+        })
     }
 
     return (
@@ -59,7 +89,7 @@ const Signup = () => {
                 <input type="password"
                     value={password2} 
                     onChange={(e)=>setPassword2(e.target.value)} />
-
+                {error && <p>{ error }</p>}
                 <button>Signup</button>
             </form>
         </div>

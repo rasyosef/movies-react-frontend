@@ -1,16 +1,15 @@
 import { useState, useEffect } from 'react'
-import { useParams, useHistory } from 'react-router-dom'
-import Cookies from 'universal-cookie'
+import { useParams, useNavigate } from 'react-router-dom'
+import { useAuthContext } from './useAuthContext'
 
 const DeleteMovie = () => {
     const { id } = useParams()
-    const history = useHistory()
+    const navigate = useNavigate()
 
     const [title, setTitle] = useState('')
     const [error, setError] = useState(null)
 
-    const cookies = new Cookies()
-    const [token,] = useState(cookies.get('token'))
+    const {token} = useAuthContext()
 
     useEffect(()=>{
         fetch(`http://localhost:8000/api/v1/${id}`, {
@@ -48,7 +47,7 @@ const DeleteMovie = () => {
             }
         }).then(() => {
             setError(null)
-            history.push('/')
+            navigate('/')
         }).catch((err) => {
             console.log(err.message)
             setError(err.message)

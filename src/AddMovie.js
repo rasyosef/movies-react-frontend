@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
-import { useHistory } from 'react-router-dom';
-import Cookies from "universal-cookie";
+import { useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom';
+import { useAuthContext } from "./useAuthContext";
 
 const AddMovie = () => {
-    
+
     const [title, setTitle] = useState('')
     const [year, setYear] = useState('')
     const [director, setDirector] = useState('')
@@ -11,39 +11,16 @@ const AddMovie = () => {
     const [categories, setCategories] = useState('')
     const [description, setDescription] = useState('')
     const [image, setImage] = useState('')
-    const [created_by, setCreatedBy] = useState(100000)
+    const [created_by, setCreatedBy] = useState('')
 
     const [error, setError] = useState(null)
-    const history = useHistory()
+    const navigate = useNavigate()
 
-    const cookies = new Cookies();
-    const [token,] = useState(cookies.get('token'))
-
-    const [username, setUsername] = useState('')
-    const [userid, setUserId] = useState(null)
+    const {token, username, userid} = useAuthContext()
 
     useEffect(()=>{
-        if (token){
-            fetch('http://localhost:8000/api/v1/dj-rest-auth/user', {
-                method : 'GET',
-                headers : {
-                    'Content-Type' : 'application/json', 
-                    Authorization : `Token ${token}`
-                }
-            }).then((res) => {
-                if (!res.ok){ 
-                    throw Error(`Error ${res.status}: data could not be fetched`)
-                }
-                return res.json()
-            }).then((data)=>{
-                setUserId(data.pk)
-                setUsername(data.username)
-                setCreatedBy(data.pk)
-            }).catch((e)=>(
-                console.log(e.message)
-            ))
-        }
-    }, [token])
+        setCreatedBy(userid)
+    }, [userid])
 
     const handleSubmit = (e) => {
         e.preventDefault()
@@ -69,7 +46,7 @@ const AddMovie = () => {
             }
         }).then(() => {
             setError(null)
-            history.push('/')
+            navigate('/')
         }).catch((err) => {
             console.log(err.message)
             setError(err.message)

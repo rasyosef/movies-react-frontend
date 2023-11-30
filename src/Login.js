@@ -1,13 +1,16 @@
 import { useState } from "react";
-import { useHistory} from "react-router-dom";
+import { useNavigate} from "react-router-dom";
 import Cookies from "universal-cookie";
+import { useAuthContext } from "./useAuthContext";
 
 const Login = () => {
     
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
 
-    const history = useHistory()
+    const { dispatch } = useAuthContext()
+
+    const navigate = useNavigate()
     const cookies = new Cookies()
 
     const handleLogin = (e) => {
@@ -25,8 +28,29 @@ const Login = () => {
             }
             throw Error(`Error ${res.status}: an error occured`)
         }).then((data)=>{
+            const token = data['key']
             cookies.set('token', data['key'])
-            history.push('/')
+            fetch('http://localhost:8000/api/v1/dj-rest-auth/user', {
+                method : 'GET',
+                headers : {
+                    'Content-Type' : 'application/json', 
+                    Authorization : `Token ${token}`
+                }
+            }).then((res) => {
+                if (!res.ok){ 
+                    throw Error(`Error ${res.status}: data could not be fetched`)
+                }
+                return res.json()
+            }).then((data)=>{
+                dispatch({type: 'LOGIN', payload: {
+                    token,
+                    username: data.username,
+                    userid: data.pk
+                }})
+                navigate('/')
+            }).catch((e)=>(
+                console.log(e.message)
+            ))
         }).catch((e)=>(
             console.log(e.message)
         ))

@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import MovieList from "./MovieList";
-import Cookies from "universal-cookie";
+import { useAuthContext } from "./useAuthContext";
 
 const Home = () => {
     const [movies, setMovies] = useState(null)
     const [error, setError] = useState(null)
 
-    const cookies = new Cookies();
-    const [token,] = useState(cookies.get('token'))
+    const {token} = useAuthContext()
     
     useEffect(()=>{
 

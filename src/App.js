@@ -7,7 +7,8 @@ import DeleteMovie from './DeleteMovie';
 import Login from './Login';
 import Signup from './Signup';
 import NotFound from './NotFound';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import PrivateRoute from './PrivateRoute';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 function App() {
   return (
@@ -15,32 +16,16 @@ function App() {
       <div className="App">
         <Navbar />
         <div className="content">
-          <Switch>
-            <Route path='/' exact>
-              <Home />
-            </Route>
-            <Route path='/signup' exact>
-              <Signup />
-            </Route>
-            <Route path='/login' exact>
-              <Login />
-            </Route>
-            <Route path='/add' exact>
-              <AddMovie />
-            </Route>
-            <Route path='/movies/:id' exact>
-              <MovieDetail />
-            </Route>
-            <Route path='/movies/:id/edit' exact>
-              <EditMovie />
-            </Route>
-            <Route path='/movies/:id/delete' exact>
-              <DeleteMovie />
-            </Route>
-            <Route path='*'>
-              <NotFound />
-            </Route>
-          </Switch>
+          <Routes>
+            <Route path='/' element={<PrivateRoute><Home /></PrivateRoute>}/>
+            <Route path='/signup' element={ <Signup /> } />
+            <Route path='/login' element={ <Login /> } />
+            <Route path='/add' element={ <PrivateRoute><AddMovie /></PrivateRoute> } />
+            <Route path='/movies/:id' element={ <PrivateRoute><MovieDetail /></PrivateRoute> } />
+            <Route path='/movies/:id/edit' element={ <PrivateRoute><EditMovie /></PrivateRoute>} />
+            <Route path='/movies/:id/delete' element={ <PrivateRoute><DeleteMovie /></PrivateRoute> } />
+            <Route path='*' element={<NotFound />} />
+          </Routes>
         </div>
       </div>
     </Router>

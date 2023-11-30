@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react"
-import { useParams, useHistory } from 'react-router-dom'
-import Cookies from "universal-cookie"
+import { useParams, useNavigate } from 'react-router-dom'
+import { useAuthContext } from "./useAuthContext"
+
 
 const EditMovie = () => {
     const { id } = useParams()
-    const history = useHistory()
+    const navigate = useNavigate()
 
     const [title, setTitle] = useState('')
     const [year, setYear] = useState('')
@@ -17,11 +18,7 @@ const EditMovie = () => {
 
     const [error, setError] = useState(null)
 
-    const cookies = new Cookies()
-    const [token,] = useState(cookies.get('token'))
-
-    const [username, setUsername] = useState('')
-    const [userid, setUserId] = useState(100000)
+    const {token, username, userid} = useAuthContext()
 
     useEffect(()=>{
         fetch(`http://localhost:8000/api/v1/${id}`, {
@@ -43,36 +40,17 @@ const EditMovie = () => {
             setCategories(data.categories)
             setDescription(data.description)
             setImage(data.image)
-            //setCreatedBy(data.created_by)
+            setCreatedBy(data.created_by)
             setError(null)
         }).catch((err) => {
             console.log(err.message)
             setError(err.message)
         }) 
 
-        fetch('http://localhost:8000/api/v1/dj-rest-auth/user', {
-            method : 'GET',
-            headers : {
-                'Content-Type' : 'application/json', 
-                Authorization : `Token ${token}`
-            }
-        }).then((res) => {
-            if (!res.ok){ 
-                throw Error(`Error ${res.status}: data could not be fetched`)
-            }
-            return res.json()
-        }).then((data)=>{
-            setUserId(data.pk)
-            setUsername(data.username)
-            setCreatedBy(data.pk)
-        }).catch((e)=>(
-            console.log(e.message)
-        ))
     }, [id, token])
 
     const handleUpdate = (e) => {
         e.preventDefault()
-
         fetch(`http://localhost:8000/api/v1/${id}/`, {
             method : 'PUT',
             headers : {
@@ -95,7 +73,7 @@ const EditMovie = () => {
             }
         }).then(() => {
             setError(null)
-            history.push(`/movies/${id}`)
+            navigate(`/movies/${id}`)
         }).catch((err) => {
             console.log(err.message)
             setError(err.message)
