@@ -1,3 +1,4 @@
+import axios from "axios";
 import { createContext, useEffect, useReducer } from "react";
 import Cookies from "universal-cookie";
 
@@ -32,23 +33,16 @@ export const AuthContextProvider = ({ children }) => {
         const cookies = new Cookies()
         const token = cookies.get('token')
         if (token){
-            fetch('http://localhost:8000/api/v1/dj-rest-auth/user', {
-                method : 'GET',
-                headers : {
+            axios.get('http://localhost:8000/api/v1/dj-rest-auth/user/', {
+                headers : { 
                     'Content-Type' : 'application/json', 
-                    Authorization : `Token ${token}`
+                    Authorization : `Token ${token}` 
                 }
-            }).then((res) => {
-                if (!res.ok){ 
-                    throw Error(`Error ${res.status}: data could not be fetched`)
-                }
-                return res.json()
-            }).then((data)=>{
-                dispatch({type: 'LOGIN', payload: {
-                    token,
-                    username: data.username,
-                    userid: data.pk
-                }})
+            }).then(({ data })=>{
+                dispatch({
+                    type: 'LOGIN', 
+                    payload: { token, username: data.username, userid: data.pk}
+                })
             }).catch((e)=>(
                 console.log(e.message)
             ))

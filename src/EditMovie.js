@@ -1,3 +1,4 @@
+import axios from "axios"
 import { useState, useEffect } from "react"
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAuthContext } from "./useAuthContext"
@@ -17,22 +18,15 @@ const EditMovie = () => {
     const [created_by, setCreatedBy] = useState('')
 
     const [error, setError] = useState(null)
-
     const {token, username, userid} = useAuthContext()
 
     useEffect(()=>{
-        fetch(`http://localhost:8000/api/v1/${id}`, {
-            method : 'GET',
+        axios.get(`http://localhost:8000/api/v1/${id}/`, {
             headers : {
                 'Content-Type' : 'application/json', 
                 Authorization : `Token ${token}`
             }
-        }).then((res) => {
-            if (!res.ok){ 
-                throw Error(`Error ${res.status}: data could not be fetched`)
-            }
-            return res.json()
-        }).then((data) => {
+        }).then(({ data }) => {
             setTitle(data.title)
             setYear(data.year_of_release)
             setDirector(data.director)
@@ -51,41 +45,30 @@ const EditMovie = () => {
 
     const handleUpdate = (e) => {
         e.preventDefault()
-        fetch(`http://localhost:8000/api/v1/${id}/`, {
-            method : 'PUT',
+        axios.put(`http://localhost:8000/api/v1/${id}/`, 
+            JSON.stringify({
+                title, year_of_release: year, director, writers,
+                categories, description, image, created_by
+            }), {
             headers : {
                 'Content-Type' : 'application/json',
                 Authorization : `Token ${token}`
-            },
-            body : JSON.stringify({
-                title,
-                year_of_release: year,
-                director,
-                writers,
-                categories,
-                description,
-                image,
-                created_by,
-            })
-        }).then((res) => {
-            if (!res.ok && res.status!==400){ 
-                throw Error(`Error ${res.status}: data could not be saved`)
-            } 
-            return res.json()
-        }).then((data) => {
-            if ('id' in data){
-                setError(null)
-                navigate(`/movies/${id}`)
-            } else {
+            }
+        }).then(() => {
+            setError(null)
+            navigate(`/movies/${id}`)
+        }).catch((err) => {
+            if (err.response.status === 400){
+                const data = err.response.data
                 const messages = []
                 for (let field in data){
                     messages.push(...data[field].map((m)=>`${field}: ${m}`))
                 }
-                setError(messages)
+                setError(messages)  
+            } else {
+                console.log(err.message)
+                setError([err.message])
             }
-        }).catch((err) => {
-            console.log(err.message)
-            setError([err.message])
         })
     }
 
@@ -121,11 +104,9 @@ const EditMovie = () => {
                     </select>
                 }
 
-                {error && 
-                    <ul>{ 
-                        error.map((m, ind)=><li key={ind}>{m}</li>)}
-                    </ul>
-                }
+                {error && <ul>{ 
+                    error.map((m, ind) => (<li key={ind}>{m}</li>))
+                }</ul>}
 
                 <button>Update</button>
             </form>

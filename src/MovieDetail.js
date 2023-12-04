@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useAuthContext } from "./useAuthContext";
@@ -11,18 +12,12 @@ const MovieDetail = () => {
     const {token, userid} = useAuthContext()
 
     useEffect(()=>{
-        fetch(`http://localhost:8000/api/v1/${id}/`, {
-            method : 'GET',
+        axios.get(`http://localhost:8000/api/v1/${id}/`, {
             headers : {
                 'Content-Type' : 'application/json', 
                 Authorization : `Token ${token}`
             }
-        }).then((res) => {
-            if (!res.ok){ 
-                throw Error(`Error ${res.status}: data could not be fetched`)
-            }
-            return res.json()
-        }).then((data) => {
+        }).then(({ data }) => {
             setMovie(data)
             setError(null)
         }).catch((err) => {

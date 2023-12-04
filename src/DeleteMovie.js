@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAuthContext } from './useAuthContext'
@@ -12,18 +13,12 @@ const DeleteMovie = () => {
     const {token} = useAuthContext()
 
     useEffect(()=>{
-        fetch(`http://localhost:8000/api/v1/${id}`, {
-            method : 'GET',
-            headers : {
+        axios.get(`http://localhost:8000/api/v1/${id}/`, { 
+            headers : { 
                 'Content-Type' : 'application/json', 
-                Authorization : `Token ${token}`
-            }
-        }).then((res) => {
-            if (!res.ok){ 
-                throw Error(`Error ${res.status}: data could not be fetched`)
-            }
-            return res.json()
-        }).then((data) => {
+                Authorization : `Token ${token}` 
+            } 
+        }).then(({ data }) => {
             setTitle(data.title)
             setError(null)
         }).catch((err) => {
@@ -35,15 +30,10 @@ const DeleteMovie = () => {
     const handleDelete = (e) => {
         e.preventDefault()
 
-        fetch(`http://localhost:8000/api/v1/${id}/`, {
-            method : 'DELETE',
+        axios.delete(`http://localhost:8000/api/v1/${id}/`, {
             headers : {
                 'Content-Type' : 'application/json',
                 Authorization : `Token ${token}`
-            },
-        }).then((res) => {
-            if (!res.ok){ 
-                throw Error(`Error ${res.status}: data could not be deleted`)
             }
         }).then(() => {
             setError(null)

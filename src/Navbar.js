@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom'
 import Cookies from 'universal-cookie';
 import { useAuthContext } from './useAuthContext';
@@ -6,11 +7,20 @@ const Navbar = () => {
     const cookies =  new Cookies()
     const navigate = useNavigate()
     const { token, username, dispatch } = useAuthContext()
-
+    
     const handleLogout = () => {
-        cookies.remove('token')
-        dispatch({type: 'LOGOUT'})
-        navigate('/login')
+        axios.post('http://localhost:8000/api/v1/dj-rest-auth/logout/', {
+            headers : {
+                'Content-Type' : 'application/json',
+                Authorization : `Token ${token}`
+            }
+        }).then(() => {
+            cookies.remove('token')
+            dispatch({type: 'LOGOUT'})
+            navigate('/login')
+        }).catch((err) => {
+            console.log(err.message)
+        })
     }
 
     return (

@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from "./useAuthContext";
@@ -24,41 +25,30 @@ const AddMovie = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        fetch('http://localhost:8000/api/v1/', {
-            method : 'POST',
-            headers : {
-                'Content-Type' : 'application/json',
+        axios.post('http://localhost:8000/api/v1/', 
+            JSON.stringify({ 
+                title, year_of_release: year, director, writers,
+                categories, description, image, created_by
+            }), {
+            headers : { 
+                'Content-Type' : 'application/json', 
                 Authorization : `Token ${token}`
-            },
-            body : JSON.stringify({
-                title,
-                year_of_release: year,
-                director,
-                writers,
-                categories,
-                description,
-                image,
-                created_by,
-            })
-        }).then((res) => {
-            if (!res.ok && res.status!==400){ 
-                throw Error(`Error ${res.status}: data could not be fetched`)
-            } 
-            return res.json()
-        }).then((data) => {
-            if ('id' in data){
-                setError(null)
-                navigate('/')
-            } else {
+            }
+        }).then(() => {
+            setError(null)
+            navigate('/')
+        }).catch((err) => {
+            if (err.response.status === 400){
+                const data = err.response.data
                 const messages = []
                 for (let field in data){
                     messages.push(...data[field].map((m)=>`${field}: ${m}`))
                 }
                 setError(messages)
+            } else {
+                console.log(err.message)
+                setError([err.message])
             }
-        }).catch((err) => {
-            console.log(err.message)
-            setError([err.message])
         })
     }
 
@@ -93,10 +83,8 @@ const AddMovie = () => {
                 </select>
                 
                 {error && <ul>{ 
-                    error.map((m, ind)=>(
-                        <li key={ind}>{m}</li>
-                    ))}
-                </ul>}
+                    error.map((m, ind) => (<li key={ind}>{m}</li>))
+                }</ul>}
                 
                 <button>Add Movie</button>
             </form>
