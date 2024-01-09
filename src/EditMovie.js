@@ -45,7 +45,7 @@ const EditMovie = () => {
 
     const handleUpdate = (e) => {
         e.preventDefault()
-        axios.put(`http://localhost:8000/api/v1/${id}/`, 
+        axios.put(`https://movies-django-backend.vercel.app/api/v1/${id}/`, 
             JSON.stringify({
                 title, year_of_release: year, director, writers,
                 categories, description, image, created_by
