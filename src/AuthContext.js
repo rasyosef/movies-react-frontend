@@ -33,7 +33,7 @@ export const AuthContextProvider = ({ children }) => {
         const cookies = new Cookies()
         const token = cookies.get('token')
         if (token){
-            axios.get('http://localhost:8000/api/v1/dj-rest-auth/user/', {
+            axios.get('https://movies-django-backend.vercel.app/api/v1/dj-rest-auth/user/', {
                 headers : { 
                     'Content-Type' : 'application/json', 
                     Authorization : `Token ${token}` 

@@ -10,7 +10,7 @@ const Home = () => {
     const {token} = useAuthContext()
     
     useEffect(()=>{
-        axios.get('http://localhost:8000/api/v1/', {
+        axios.get('https://movies-django-backend.vercel.app/api/v1/', {
             headers : {
                 'Content-Type' : 'application/json', 
                 Authorization : `Token ${token}`

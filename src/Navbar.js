@@ -9,7 +9,7 @@ const Navbar = () => {
     const { token, username, dispatch } = useAuthContext()
     
     const handleLogout = () => {
-        axios.post('http://localhost:8000/api/v1/dj-rest-auth/logout/', {
+        axios.post('https://movies-django-backend.vercel.app/api/v1/dj-rest-auth/logout/', {
             headers : {
                 'Content-Type' : 'application/json',
                 Authorization : `Token ${token}`

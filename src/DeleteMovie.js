@@ -13,7 +13,7 @@ const DeleteMovie = () => {
     const {token} = useAuthContext()
 
     useEffect(()=>{
-        axios.get(`http://localhost:8000/api/v1/${id}/`, { 
+        axios.get(`https://movies-django-backend.vercel.app/api/v1/${id}/`, { 
             headers : { 
                 'Content-Type' : 'application/json', 
                 Authorization : `Token ${token}` 
@@ -30,7 +30,7 @@ const DeleteMovie = () => {
     const handleDelete = (e) => {
         e.preventDefault()
 
-        axios.delete(`http://localhost:8000/api/v1/${id}/`, {
+        axios.delete(`https://movies-django-backend.vercel.app/api/v1/${id}/`, {
             headers : {
                 'Content-Type' : 'application/json',
                 Authorization : `Token ${token}`

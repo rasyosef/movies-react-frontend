@@ -25,7 +25,7 @@ const AddMovie = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        axios.post('http://localhost:8000/api/v1/', 
+        axios.post('https://movies-django-backend.vercel.app/api/v1/', 
             JSON.stringify({ 
                 title, year_of_release: year, director, writers,
                 categories, description, image, created_by

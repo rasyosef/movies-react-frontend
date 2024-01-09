@@ -21,7 +21,7 @@ const EditMovie = () => {
     const {token, username, userid} = useAuthContext()
 
     useEffect(()=>{
-        axios.get(`http://localhost:8000/api/v1/${id}/`, {
+        axios.get(`https://movies-django-backend.vercel.app/api/v1/${id}/`, {
             headers : {
                 'Content-Type' : 'application/json', 
                 Authorization : `Token ${token}`
