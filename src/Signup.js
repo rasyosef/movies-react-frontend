@@ -19,7 +19,7 @@ const Signup = () => {
 
     const handleLogin = (e) => {
         e.preventDefault()
-        axios.post('http://localhost:8000/api/v1/dj-rest-auth/registration/', 
+        axios.post('https://movies-django-backend.vercel.app/api/v1/dj-rest-auth/registration/', 
             JSON.stringify({ 
                 username, email, password1, password2 
             }), {
@@ -31,7 +31,7 @@ const Signup = () => {
             const token = data['key']
             cookies.set('token', data['key'])
             
-            axios.get('http://localhost:8000/api/v1/dj-rest-auth/user/', {
+            axios.get('https://movies-django-backend.vercel.app/api/v1/dj-rest-auth/user/', {
                 headers : {
                     'Content-Type' : 'application/json', 
                     Authorization : `Token ${token}`
